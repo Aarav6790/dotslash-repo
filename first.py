@@ -16,6 +16,6 @@ def remove_stopwords(sentence):
     return filtered_words
 
 # Sample sentence
-sentence = "I am not feeling too good today"
+sentence = "I deposited money in the bank. the boat is in the bank of the river."
 filtered_sentence = remove_stopwords(sentence)
 print("Filtered Sentence:", filtered_sentence)
