@@ -62,7 +62,7 @@ def classify_sentence(sentence):
 
 # Example usage
 if __name__ == "__main__":
-    sentence = "He deposited money in the bank for his car he bought in Chandigarh."
+    sentence = "stock food for stock market collapse"
     classifications = classify_sentence(sentence)
     print("Word Classifications:")
     for word, category in classifications.items():
