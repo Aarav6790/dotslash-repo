@@ -1,10 +1,14 @@
 import requests
-from transformers import BertTokenizer, BertModel
+from transformers import BertTokenizer, BertForSequenceClassification
 import torch
 import re
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+
+# Download NLTK resources
+# nltk.download("stopwords")
+# nltk.download("punkt")
 
 # Define the remove_stopwords function
 def remove_stopwords(sentence):
@@ -21,7 +25,33 @@ def preprocess_text(sentence):
     tokens = remove_stopwords(cleaned_sentence)
     return tokens
 
-# Function to call the API
+# Function to classify tokens using a BERT-based classifier
+def classify_tokens_with_bert(tokens):
+    # Load pretrained BERT tokenizer and classifier model
+    tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
+    model = BertForSequenceClassification.from_pretrained("bert-base-uncased", num_labels=20)
+
+    # Define categories (for demonstration; update as per your needs)
+    categories = ["Finance", "Legal", "Numbers", "Locations", "Technical",
+                  "Action_and_Activity", "Emotion", "Time", "People", "Places",
+                  "Objects", "Food", "Nature", "Transportation", "Household",
+                  "Event", "Navigation", "Sound", "Animals", "General"]
+
+    token_labels = []
+    for token in tokens:
+        # Encode each token
+        inputs = tokenizer(token, return_tensors="pt", padding=True, truncation=True)
+        
+        # Get predictions
+        with torch.no_grad():
+            outputs = model(**inputs)
+            predictions = torch.argmax(outputs.logits, dim=1)
+            label = categories[predictions.item()]
+            token_labels.append((token, label))
+
+    return token_labels
+
+# Function to call the GPT-4 API
 def get_completion(system_prompt, user_prompt):
     # Define the API URL
     API_URL = "http://hackapi.rhosigma.tech/api/completion"
@@ -75,17 +105,25 @@ if __name__ == "__main__":
     tokens = preprocess_text(sentence)
     print("Tokens after preprocessing:", tokens)
     
-    # Define system and user prompts
-    system_prompt = '''Categorize each word in the sentence based on its neighbors. 
-    Choose the most specific category from: Finance, Legal, Numbers, Locations, Technical, 
-    Action_and_Activity, Emotion, Time, People, Places, Objects, Food, Nature, Transportation, Household, 
-    Event, Navigation, Sound, Animals, General. output format=> word_category'''
+    # Classify tokens using BERT-based classifier
+    bert_classifications = classify_tokens_with_bert(tokens)
+    print("BERT Classifications:", bert_classifications)
     
-    # Limit the number of tokens if necessary
-    MAX_TOKENS = 50  # Set a maximum token length
-    user_prompt = " ".join(tokens[:MAX_TOKENS])  # Truncate tokens if needed
-    
-    # Get the completion
+    # Prepare data for GPT-4 API
+    combined_input = [
+        f"{word} ({bert_label})" for word, bert_label in bert_classifications
+    ]
+    user_prompt = " ".join(combined_input)
+
+    # Define system prompt
+    system_prompt = '''
+    Refine the categorization of each word based on its BERT-assigned category and its neighbours. 
+Map each word to one of the following categories: 
+Finance, Legal, Numbers, Locations, Technical, Action_and_Activity, Emotion, Time, People, Places, Objects, Food, Nature, Transportation, Household, Event, Navigation, Sound, Animals, General.
+Format: word_finalCategory
+    '''
+
+    # Call the GPT-4 API
     response = get_completion(system_prompt, user_prompt)
     
     # Process and print the response
