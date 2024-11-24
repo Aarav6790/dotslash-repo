@@ -1,81 +1,30 @@
-# dotslash-repo
-
-## Welcome to the dotslash Hackathon Repository! 🚀
-
-### Instructions:
-- **Fork this repository**: Only one member from each team must fork this repository to their own GitHub account.
-- **Commit directly to your fork**: All submissions, code, and documentation must be committed to your fork. This repository will serve as your primary workspace during the hackathon.
-
-- [Rulebook and Sponsor Problem Statements](https://tanmayrainanda.craft.me/dotslash-info-repo)
----
-
-## Requirements
-
-1. **Pitch Deck**  
-   - All submissions must include a **pitch deck** explaining your idea and its implementation.  
-   
-2. **Well-Commented Code**  
-   - Ensure that all code is well-documented with comments and follows standard coding practices.  
-   
-3. **Mid-Hack Folder**  
-   - Create a folder named `mid-hack` in your fork. This folder should contain all materials required for the **mid-hack submission**, including progress updates, initial implementation, and any supporting files.  
-
-4. **Citation File**  
-   - Include a `citations.md` file in your repository. All external resources (e.g., articles, tutorials, code snippets) must be properly cited here. Failure to do so may result in your project being flagged for plagiarism.
-
-5. **End-Hack Folder**  
-   - Create a folder named `end-hack` in your fork. This folder should contain all materials for the **final submission**, including the completed project, pitch deck, and any supplementary resources.
-
----
-
-## Suggestions for Participants
-
-1. **Maintain Clean and Consistent Code**  
-   - Use comments and docstrings to document your code.  
-   - Follow a consistent naming convention for files, functions, and variables to improve readability.
-
-2. **Commit Regularly**  
-   - Push commits frequently rather than submitting a single large commit at the end.  
-   - This practice not only showcases your progress but also helps in avoiding plagiarism issues.
-
-3. **Version Control Best Practices**  
-   - Use branches for major features or experimental changes and merge them into the main branch after testing.  
-   - Write clear, concise commit messages for better traceability.
-
-4. **Utilize GitHub Issues and Pull Requests**  
-   - Track tasks and discussions using GitHub Issues.  
-   - Use Pull Requests (PRs) to review and merge changes within your team. This will help in maintaining a collaborative workflow.
-
----
-
-## Submission Guidelines
-
-- **Mid-Hack Checkpoint**  
-  Submit the contents of your `mid-hack` folder by the designated checkpoint time. This will include progress updates and preliminary work.
-
-- **Final Submission**  
-  Ensure that all files for your final project are stored in the `end-hack` folder. Your pitch deck and `citations.md` file must also be updated and included here.  
-
----
-
-## Resources
-
-1. **Git and GitHub Basics**  
-   - If you’re new to Git, check out these resources:  
-     - [Git Documentation](https://git-scm.com/doc)  
-     - [GitHub Guides](https://guides.github.com/)  
-
-2. **Project Ideas**  
-   - Explore hackathon project examples for inspiration:  
-     - [DevPost](https://devpost.com/)  
-     - [Awesome Hackathon Projects](https://github.com/daveverwer/awesome-hackathon-projects)  
-
----
-
-## Code of Conduct
-
-By participating in this hackathon, you agree to follow the event’s Code of Conduct. Be respectful, inclusive, and ensure a positive experience for all participants.  
-
-For any queries or support, feel free to contact the organizing team.  The full code of conduct can be found at [Fest Website](https://www.fitoorxprayas.in/rules)
-
-Happy hacking! 🎉
+## Problem Statement
+The aim of this project is to map words in a sentence to their appropriate contextual categories to facilitate their conversion into sign language for the deaf. Each word must be classified into one of a predefined set of categories (e.g., Finance, Legal, Numbers, Locations, etc.) based on its usage in context. Accurate classification is crucial to ensure the correct interpretation and conveyance of meaning in sign language.
+________________________________________
+## Idea
+1.	Initial Plan with API
+Initially, we used an API (powered by GPT-4) to classify words into categories based on context. While the API showed promise in understanding sentences, its responses were inconsistent and often mapped words to general or irrelevant categories, reducing the accuracy of the classification.
+2.	Integration of BERT
+To improve classification, we incorporated BERT (Bidirectional Encoder Representations from Transformers). BERT is a pretrained language model designed to generate contextual word embeddings by analyzing the entire sentence context in both directions (left-to-right and right-to-left). These embeddings are particularly useful for context-aware tasks.
+Using BERT, we aimed to classify each word into one of our predefined categories. However, BERT’s pretrained model was not specifically designed for our custom categories. Moreover, it exhibited limitations:
+o	Repetition Issue: In sentences where the same word appeared multiple times, BERT often assigned a category based on its first occurrence, ignoring subsequent contextual variations.
+3.	Combining API and BERT
+To overcome the limitations of both methods, we integrated BERT and the API into a unified workflow:
+o	BERT’s Role: It generates contextual embeddings for words in the sentence. These embeddings represent the contextual meaning of each word.
+o	API’s Role: The API utilizes these embeddings, along with BERT’s classification, as weighted inputs to determine the most contextually accurate category for each word. The final classification is constrained to our predefined categories to ensure relevance.
+________________________________________
+## Implementation
+1.	Predefined Categories:
+We defined 20 specific categories such as Finance, Legal, Numbers, Food, Nature, etc., to guide the classification process.
+2.	Dummy Dataset:
+We created a dummy dataset representing words and their contextual meanings to simulate training for BERT. While this dataset allowed us to explore the training process, due to time and resource constraints, we did not train BERT.
+3.	Limitations of Pretrained BERT:
+The pretrained BERT model supports only general contextual classification or up to 4 default categories. For our custom categories, training was necessary. However, due to the lack of sufficient labeled data and time, we focused on showing how training could be implemented, leaving actual training for future work.
+4.	API and BERT Integration:
+o	BERT: Generates embeddings for words.
+o	API: Combines BERT-generated embeddings with sentence context to refine the classification.
+o	Logic: A weighted approach gives 70% weight to BERT’s output and 30% to the API’s context analysis. This ensures the output is precise and fits into one of the predefined categories.
+________________________________________
+## Outcome
+The integration of BERT and the API resulted in more accurate and precise word classifications. By combining contextual embeddings and external API-based context analysis, our system successfully addresses the challenge of mapping words to their appropriate categories, paving the way for effective translation into sign language for the deaf.
+The project also demonstrates how BERT models can be retrained with a custom dataset for more tailored classifications in future iterations.
